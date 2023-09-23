@@ -1,0 +1,117 @@
+{
+    "Magic": "*u2",
+
+    "?Magic" : {
+        "0x10b": "PE32",
+        "0x20b": "PE32+"
+    },
+
+    "-PE32": {
+        "LinkerVersion": "*u2",
+        "SizeOfCode": "*u4",
+        "SizeOfInitializedData": "*u4",
+        "SizeOfUninitializedData": "*u4",
+        "AddressOfEntryPoint": "*u4",
+        "BaseOfCode": "*u4",
+        "BaseOfData": "*u4",
+        "ImageBase": "*u4",
+        "SectionAlignment": "*u4",
+        "FileAlignment": "*u4",
+        "OperatingSystemVersion": "*u4",
+        "ImageVersion": "*u4",
+        "SubsystemVersion": "*u4",
+        "Win32VersionValue": "*u4",
+        "SizeOfImage": "*u4",
+        "SizeOfHeaders": "*u4",
+        "CheckSum": "*u4",
+        "Subsystem": "*u2",
+        "DllCharacteristics": "*u2",
+
+        "SizeOfStackReserve": "*u4",
+        "SizeOfStackCommit": "*u4",
+        "SizeOfHeapReserve": "*u4",
+        "SizeOfHeapCommit": "*u4",
+        "LoaderFlags": "*u4",
+        "NumberOfRvaAndSizes": "*u4",
+
+        "ExportTable": "header/directories.json",
+        "ImportTable": "header/directories.json",
+        "ResourceTable": "header/directories.json",
+        "ExceptionTable": "header/directories.json",
+        "CertificateTable": "header/directories.json",
+        "BaseRelocationTable": "header/directories.json",
+        "Debug": "header/directories.json",
+        "Architecture": "header/directories.json",
+        "GlobalPtr": "header/directories.json",
+        "TLSTable": "header/directories.json",
+        "LoadConfigTable": "header/directories.json",
+        "BoundImport": "header/directories.json",
+        "IAT": "header/directories.json",
+        "DelayImportDescriptor": "header/directories.json",
+        "CLRRuntimeHeader": "header/directories.json",
+        "Reserved": "header/directories.json",
+
+        "?Subsystem": {
+            "2": "Windows GUI"
+        },
+        "?DllCharacteristics": {
+            "0x20":  "High Entropy Virtual Addresses",
+            "0x40":  "Dynamic base",
+            "0x100": "NX compatible"
+        }
+    },
+    "-PE32+": {
+        "LinkerVersion": "*u2",
+        "SizeOfCode": "*u4",
+        "SizeOfInitializedData": "*u4",
+        "SizeOfUninitializedData": "*u4",
+        "AddressOfEntryPoint": "*u4",
+        "BaseOfCode": "*u4",
+        "ImageBase": "*u8",
+        "SectionAlignment": "*u4",
+        "FileAlignment": "*u4",
+        "OperatingSystemVersion": "*u4",
+        "ImageVersion": "*u4",
+        "SubsystemVersion": "*u4",
+        "Win32VersionValue": "*u4",
+        "SizeOfImage": "*u4",
+        "SizeOfHeaders": "*u4",
+        "CheckSum": "*u4",
+        "Subsystem": "*u2",
+        "DllCharacteristics": "*u2",
+
+        "SizeOfStackReserve": "*u8",
+        "SizeOfStackCommit": "*u8",
+        "SizeOfHeapReserve": "*u8",
+        "SizeOfHeapCommit": "*u8",
+
+        "LoaderFlags": "*u4",
+        "NumberOfRvaAndSizes": "*u4",
+
+        "ExportTable": "header/directories.json",
+        "ImportTable": "header/directories.json",
+        "ResourceTable": "header/directories.json",
+        "ExceptionTable": "header/directories.json",
+        "CertificateTable": "header/directories.json",
+        "BaseRelocationTable": "header/directories.json",
+        "Debug": "header/directories.json",
+        "Architecture": "header/directories.json",
+        "GlobalPtr": "header/directories.json",
+        "TLSTable": "header/directories.json",
+        "LoadConfigTable": "header/directories.json",
+        "BoundImport": "header/directories.json",
+        "IAT": "header/directories.json",
+        "DelayImportDescriptor": "header/directories.json",
+        "CLRRuntimeHeader": "header/directories.json",
+        "Reserved": "header/directories.json",
+
+        "?Subsystem": {
+            "2": "Windows GUI"
+        },
+        "?DllCharacteristics": {
+            "0x20":  "High Entropy Virtual Addresses",
+            "0x40":  "Dynamic base",
+            "0x100": "NX compatible"
+        }
+    }
+}

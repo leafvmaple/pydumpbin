@@ -4,14 +4,14 @@ with open('README.md') as f:
     long_description = f.read()
 
 setup(
-    name="pycoff",
+    name="pydumpbin",
     version="1.0.1",
-    keywords=["coff", "elf", "pe", "pycoff"],
+    keywords=["coff", "elf", "pe", "pydumpbin"],
     description="COFF(ELF on Linux, PE on Windows) parser",
     long_description=long_description,
     long_description_content_type="text/markdown",
     license="BSD License",
-    url="https://github.com/leafvmaple/pycoff",
+    url="https://github.com/leafvmaple/pydumpbin",
     author="Zohar Lee",
     author_email="leafvmaple@gmail.com",
     packages=find_packages(),
