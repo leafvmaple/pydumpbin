@@ -1,0 +1,2 @@
+graft pycoff/template
+global-exclude *.py[cod]

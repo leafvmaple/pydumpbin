@@ -1,0 +1,19 @@
+{
+    "Name"        : "*s16",
+    "Date"        : "is12",
+    "UserID"      : "*s6",
+    "GroupID"     : "*s6",
+    "Mode"        : "is8",
+    "Size"        : "is10",
+    "_EndOfHeader" : "*s2",
+
+    "?Date": "timestamp",
+    "?Mode": {
+        "0x0040": "IEXEC",
+        "0x0080": "IWRITE",
+        "0x0100": "IREAD",
+        "0x1000": "IFIFO",
+        "0x4000": "IFDIR",
+        "0x8000": "IFREG"
+    }
+}
