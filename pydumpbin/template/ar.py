@@ -1,5 +1,5 @@
-from pycoff.utils import read
-from pycoff.node import Node
+from pydumpbin.utils import read
+from pydumpbin.node import Node
 
 MAGIC = b"!<arch>\n"
 EXT = [".lib"]

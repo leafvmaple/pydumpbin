@@ -1,4 +1,4 @@
-from pycoff.node import Node
+from pydumpbin.node import Node
 
 
 def __init__(node: Node, file, json_data, py_data):

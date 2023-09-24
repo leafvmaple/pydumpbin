@@ -5,7 +5,7 @@ with open('README.md') as f:
 
 setup(
     name="pydumpbin",
-    version="1.0.1",
+    version="1.1.4",
     keywords=["coff", "elf", "pe", "pydumpbin"],
     description="COFF(ELF on Linux, PE on Windows) parser",
     long_description=long_description,

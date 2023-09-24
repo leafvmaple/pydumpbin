@@ -1,7 +1,7 @@
 import sys
 
-_MZ   = b'MZ'
-_PE   = b'PE\0\0'
+_MZ = b'MZ'
+_PE = b'PE\0\0'
 
 LIB = [".dll"]
 

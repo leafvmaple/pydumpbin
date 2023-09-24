@@ -1,0 +1,61 @@
+{
+    "FileHeader": {
+        "EI_CLASS": "*u1",
+        "EI_DATA": "*u1",
+        "EI_VERSION": "*u1",
+        "EI_OSABI": "*u1",
+        "EI_ABIVERSION": "*u1",
+        "EI_PAD": "*u7",
+        "Type": "*u2",
+        "Machine": "*u2",
+        "Version": "*u4",
+        "$Entry": {
+            "-x86": "*u4",
+            "-x64": "*u8"
+        },
+        "$ProgramHeaderOffset": {
+            "-x86": "*u4",
+            "-x64": "*u8"
+        },
+        "$SectionHeaderOffset": {
+            "-x86": "*u4",
+            "-x64": "*u8"
+        },
+        "Flags": "*u4",
+        "EHSize": "*u2",
+        "ProgramHeaderEntSize": "*u2",
+        "ProgramHeaderNum": "*u2",
+        "SectionHeaderEntSize": "*u2",
+        "SectionHeaderNum": "*u2",
+        "SectionHeaderStrIndex": "*u2",
+
+        "?EI_CLASS": {
+            "0x1": "x32",
+            "0x2": "x64"
+        },
+
+        "?EI_OSABI": {
+            "0x00":	"System V",
+            "0x01":	"HP-UX",
+            "0x02":	"NetBSD",
+            "0x03":	"Linux",
+            "0x04":	"GNU Hurd",
+            "0x06":	"Solaris",
+            "0x07":	"AIX (Monterey)",
+            "0x08":	"IRIX",
+            "0x09":	"FreeBSD",
+            "0x0A":	"Tru64",
+            "0x0B":	"Novell Modesto",
+            "0x0C":	"OpenBSD",
+            "0x0D":	"OpenVMS",
+            "0x0E":	"NonStop Kernel",
+            "0x0F":	"AROS",
+            "0x10":	"FenixOS",
+            "0x11":	"Nuxi CloudABI",
+            "0x12":	"Stratus Technologies OpenVOS"
+        }
+    },
+    "$SectionHeaders": {
+        "[FileHeader.SectionHeaderNum]": "header/program.json"
+    }
+}

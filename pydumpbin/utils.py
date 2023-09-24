@@ -1,5 +1,4 @@
 import sys
-import json
 
 BYTE_ORDER = {
     '*': sys.byteorder,
@@ -135,54 +134,24 @@ def read_bytes(file, offset, len):
     return data
 
 
-class Struct:
-    def __init__(self, desc={}, display=[], filter=[], initvars=None):
-        self._form    = {}
-        self._export  = {}
-        self._desc    = desc
-        self._display = display
-        self._filter  = filter
-
-        if initvars:
-            for k, v in initvars.items():
-                setattr(self, k, v)
-
-    def __str__(self):
-        return str(self.format())
-
-    def format(self):
-        keys = [v for v in vars(self).keys() if (not v.startswith('_') or v in self._display) and v not in self._filter]
-        return format(self, keys, self._desc)
-        # return format(self, list(set(vars(self).keys()).union(set(self._display)).difference(set(self._filter))), self._desc)
-
-    def read(self, key, file, form, initvars=None):
-        self._form[key] = form
-        setattr(self, key, read(file, form, initvars))
-
-    def tojson(self, indent='\t'):
-        return json.dumps(self.format(), indent=indent)
-
-    def to_bytes(self):
-        return to_bytes(self, self._export)
+def file_slice(file, begin, end=None):
+    if file is None:
+        return b''
+    if end is None:
+        end = file.tell()
+    tell = file.tell()
+    file.seek(begin)
+    data = file.read(end - begin)
+    file.seek(tell)
+    return data
 
 
-class Version:
-    def __init__(self, file, export):
-        self._export = export
+def hex(value):
+    return "0x%04X" % value
 
-        self.Major = 0
-        self.Minor = 0
 
-        from_bytes(self, file, export)
-
-    def __str__(self):
-        return str(self.format())
-
-    def format(self):
-        return '{0}.{1:0>2d}'.format(self.Major, self.Minor)
-
-    def tojson(self, indent='\t'):
-        return json.dumps(self.format(), indent=indent)
-
-    def to_bytes(self):
-        return to_bytes(self, self._export)
+def decrypt_platform(node, file, json_data, py_data, x64=None):
+    if x64 is True:
+        node.decrypt(file, json_data["-x86"], py_data)
+    elif x64 is False:
+        node.decrypt(file, json_data["-x64"], py_data)

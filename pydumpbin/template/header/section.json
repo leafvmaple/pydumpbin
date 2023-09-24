@@ -16,11 +16,6 @@
         "SymbolTableIndex": "*u4",
         "Type": "*u2"
     },
-    
-    ">PointerToRawData": "0x",
-    ">PointerToRelocations": "0x",
-    ">PointerToLinenumbers": "0x",
-    ">Characteristics": "0x",
 
     "?Characteristics": {
         "0x00000008": "IMAGE_SCN_TYPE_NO_PAD",

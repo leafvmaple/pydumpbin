@@ -3,8 +3,6 @@
     "SymbolTableIndex": "*u4",
     "Type": "*u2",
 
-    ">VirtualAddress": "0x",
-
     "?Type": {
         "0x0000": "IMAGE_REL_AMD64_ABSOLUTE",
         "0x0001": "IMAGE_REL_AMD64_ADDR64",

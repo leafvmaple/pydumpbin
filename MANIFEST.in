@@ -1,2 +1,2 @@
-graft pycoff/template
+graft pydumpbin/template
 global-exclude *.py[cod]
