@@ -26,5 +26,45 @@
     "$EntSize": {
         "-x32": "*u4",
         "-x64": "*u8"
+    },
+    "$Raw": "raw",
+
+    "?Type": {
+        "0x0": "NULL",
+        "0x1": "PROGBITS",
+        "0x2": "SYMTAB",
+        "0x3": "STRTAB",
+        "0x4": "RELA",
+        "0x5": "HASH",
+        "0x6": "DYNAMIC",
+        "0x7": "NOTE",
+        "0x8": "NOBITS",
+        "0x9": "REL",
+        "0x0A": "SHLIB",
+        "0x0B": "DYNSYM",
+        "0x0E": "INIT_ARRAY",
+        "0x0F": "FINI_ARRAY",
+        "0x10": "PREINIT_ARRAY",
+        "0x11": "GROUP",
+        "0x12": "SYMTAB_SHNDX",
+        "0x13": "NUM",
+        "0x60000000": "LOOS"
+    },
+
+    "?Flags": {
+        "0x1": "WRITE",
+        "0x2": "ALLOC",
+        "0x4": "EXECINSTR",
+        "0x10": "MERGE",
+        "0x20": "STRINGS",
+        "0x40": "INFO_LINK",
+        "0x80": "LINK_ORDER",
+        "0x100": "OS_NONCONFORMING",
+        "0x200": "GROUP",
+        "0x400": "TLS",
+        "0x0FF00000": "MASKOS",
+        "0xF0000000": "MASKPROC",
+        "0x4000000": "ORDERED",
+        "0x8000000": "EXCLUDE"
     }
 }

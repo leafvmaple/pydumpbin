@@ -1,5 +1,4 @@
 import os
-import re
 import json
 import runpy
 import datetime
@@ -8,25 +7,25 @@ from .utils import read, file_slice, hex
 
 def read_py(f, path):
     if not os.path.exists(path):
-        return False
+        return 'failed', {}
     py_data = runpy.run_path(path)
     if not check_ext(f, py_data):
-        return False
+        return 'invalid', {}
     if not check_magic(f, py_data):
-        return False
-    return py_data
+        return 'invalid', {}
+    return 'success', py_data
 
 
-def read_file(f, path, check=False):
+def process_file(f, path, check=False):
     py_path = path.replace('.json', '.py')
-    py_data = read_py(f, py_path)
-    if check and not py_data:
-        return False, None
+    state, py_data = read_py(f, py_path)
+    if state == 'invalid':
+        return state, None, None
 
     with open(path, 'r') as jf:
         json_data = json.load(jf)
 
-    return json_data, py_data
+    return 'success', json_data, py_data
 
 
 def check_magic(f, py_data):
@@ -60,10 +59,11 @@ def get_value(raw, tab):
 
 
 class Node:
-    def __init__(self, key='', data=None, root=None):
+    def __init__(self, key='', root=None, parent=None, data=None):
         self._desc = ''
         self._display = ''
         self._key = key
+        self._parent = parent
         self._data = data if data else {}
         self._root = root if root else self
 
@@ -92,14 +92,17 @@ class Node:
         if json_data == 'timestamp':
             self._desc = datetime.datetime.fromtimestamp(self._data) if self._data > 0 else 'FFFFFFFF'
         elif type(json_data) is dict:
-            self._desc = []
             desc = {eval(k) if type(k) is str else k: v for k, v in json_data.items()}
             keys = sorted(desc, reverse=True)
             value = self._data
-            for k in keys:
-                if value >= k and (value & k or value == k):
-                    self._desc.append(desc[k])
-                    value -= k
+            if value in desc:
+                self._desc = desc[value]
+            else:
+                self._desc = []
+                for k in keys:
+                    if value >= k and value & k:
+                        self._desc.append(desc[k])
+                        value -= k
 
     def decrypt(self, f, json_data, py_data, py=False):
         self._begin = f.tell() if f else 0
@@ -108,7 +111,8 @@ class Node:
             self.decrypt_py(f, self._key, json_data, py_data)
         else:
             self.decrypt_json(f, json_data, py_data)
-        self._raw = file_slice(f, self._begin)
+        if not hasattr(self, '_raw'):
+            self._raw = file_slice(f, self._begin)
         return self
 
     def decrypt_json(self, f, json_data, py_data):
@@ -118,30 +122,46 @@ class Node:
             self.decrypt_str(f, json_data, py_data)
         if type(json_data) is dict:
             self.decrypt_dict(f, json_data, py_data)
-        self._raw = file_slice(f, self._begin)
 
     def decrypt_py(self, f, key, json_data, py_data):
         if callable(py_data[key]):
             py_data[key](self, f, json_data, py_data)
-        self._raw = file_slice(f, self._begin)
 
-    def decrypt_file(self, f, json_data, py_data):
-        path = os.path.join(os.path.dirname(__file__), 'template', json_data)
-        sub_json, sub_py = read_file(f, path)
+    def decrypt_raw(self, f, begin, size):
+        self._begin = begin
+        self._addr = hex(self._begin)
 
-        if sub_py and '__init__' in sub_py:
-            sub_py['__init__'](self, f, sub_json, sub_py)
-        else:
-            self.decrypt(f, sub_json, sub_py)
+        self._raw = file_slice(f, self._begin, begin + size)
+
+    def decrypt_file(self, f, json_name):
+        path = os.path.join(os.path.dirname(__file__), 'template', json_name)
+        state, json_data, py_data = process_file(f, path)
+        if state != 'success':
+            return False
+
+        if py_data and '__init__' in py_data:
+            py_data['__init__'](self, f, json_data, py_data)
+
+        self.decrypt(f, json_data, py_data)
+
+        if py_data and '__del__' in py_data:
+            py_data['__del__'](self, f, json_data, py_data)
+
+        return True
 
     def decrypt_str(self, f, json_data: str, py_data):
         if json_data.endswith('.json'):
-            self.decrypt_file(f, json_data, py_data)
+            self.decrypt_file(f, json_data)
         else:
             self._data = read(f, json_data)
 
     def decrypt_dict(self, f, json_data: dict, py_data):
         for k, v in json_data.items():
+
+            kargs = {
+                'parent': self,
+                'root': self._root
+            }
 
             if k.startswith('-') or k.startswith('>'):
                 continue
@@ -150,16 +170,16 @@ class Node:
                 value.desc(v)
             elif k.startswith('$'):
                 k = k[1:]
-                self[k] = Node(k, root=self._root)
+                self[k] = Node(k, **kargs)
                 self[k].decrypt(f, v, py_data, True)
             elif k.startswith('['):
                 num = get_value(k, self._root)
                 k = self._key[:-1]
-                self._data = [Node(k, root=self._root) for i in range(num)]
+                self._data = [Node(k, **kargs) for i in range(num)]
                 for node in self._data:
                     node.decrypt(f, v, py_data)
             else:
-                self[k] = Node(k, root=self._root)
+                self[k] = Node(k, **kargs)
                 self[k].decrypt(f, v, py_data)
 
     def decrypt_platform(self, file, json_data, py_data, x64=None):
@@ -195,13 +215,6 @@ def parse_from_template(file):
             if not json_name.endswith('json') or root.endswith('header'):
                 continue
             file.seek(0)
-            json_data, py_data = read_file(file, os.path.join(root, json_name), True)
-            if json_data:
-                node = Node()
-                return node.decrypt(file, json_data, py_data)
-
-
-if __name__ == '__main__':
-    file = open('D:\\Github\\coff-viewer\\test\\simplesection.o', 'rb')
-    data = parse_from_template(file)
-    print(data)
+            node = Node()
+            if node.decrypt_file(file, os.path.join(root, json_name)):
+                return node
