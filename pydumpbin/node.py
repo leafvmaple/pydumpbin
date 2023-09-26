@@ -2,6 +2,7 @@ import os
 import json
 import runpy
 import datetime
+
 from .utils import read, file_slice, hex
 
 
@@ -51,8 +52,14 @@ def get_obj(raw_key, tab):
     return tab[key]
 
 
-def get_value(raw, tab):
-    values = raw[1:-1].split('.')
+def get_value(raw, parent, root):
+    key = raw[1:-1]
+    if key.startswith('.'):
+        key = key[1:]
+        tab = parent._parent
+    else:
+        tab = root
+    values = key.split('.')
     for value in values:
         tab = tab[value]
     return int(tab)
@@ -60,6 +67,7 @@ def get_value(raw, tab):
 
 class Node:
     def __init__(self, key='', root=None, parent=None, data=None):
+        self._py = False
         self._desc = ''
         self._display = ''
         self._key = key
@@ -104,12 +112,10 @@ class Node:
                         self._desc.append(desc[k])
                         value -= k
 
-    def decrypt(self, f, json_data, py_data, py=False):
+    def decrypt(self, f, json_data, py_data, py_enable=True):
         self._begin = f.tell() if f else 0
         self._addr = hex(self._begin)
-        if py:
-            self.decrypt_py(f, self._key, json_data, py_data)
-        else:
+        if self._py or not self.decrypt_py(f, json_data, py_data):
             self.decrypt_json(f, json_data, py_data)
         if not hasattr(self, '_raw'):
             self._raw = file_slice(f, self._begin)
@@ -123,9 +129,10 @@ class Node:
         if type(json_data) is dict:
             self.decrypt_dict(f, json_data, py_data)
 
-    def decrypt_py(self, f, key, json_data, py_data):
-        if callable(py_data[key]):
-            py_data[key](self, f, json_data, py_data)
+    def decrypt_py(self, f, json_data, py_data):
+        if self._key in py_data and callable(py_data[self._key]):
+            self._py = True
+            return py_data[self._key](self, f, json_data, py_data) is not False
 
     def decrypt_raw(self, f, begin, size):
         self._begin = begin
@@ -163,18 +170,16 @@ class Node:
                 'root': self._root
             }
 
+            assert not k.startswith('$')
+
             if k.startswith('-') or k.startswith('>'):
                 continue
             elif k.startswith('?'):
                 value = get_obj(k, self._data)
                 value.desc(v)
-            elif k.startswith('$'):
-                k = k[1:]
-                self[k] = Node(k, **kargs)
-                self[k].decrypt(f, v, py_data, True)
             elif k.startswith('['):
-                num = get_value(k, self._root)
-                k = self._key[:-1]
+                num = get_value(k, **kargs)
+                k = self._key[:-1]  # remove 's'
                 self._data = [Node(k, **kargs) for i in range(num)]
                 for node in self._data:
                     node.decrypt(f, v, py_data)

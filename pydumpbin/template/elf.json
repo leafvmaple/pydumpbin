@@ -9,15 +9,15 @@
         "Type": "*u2",
         "Machine": "*u2",
         "Version": "*u4",
-        "$Entry": {
+        "Entry": {
             "-x86": "*u4",
             "-x64": "*u8"
         },
-        "$ProgramHeaderOffset": {
+        "ProgramHeaderOffset": {
             "-x86": "*u4",
             "-x64": "*u8"
         },
-        "$SectionHeaderOffset": {
+        "SectionHeaderOffset": {
             "-x86": "*u4",
             "-x64": "*u8"
         },
@@ -143,7 +143,7 @@
             "0x101": "WDC 65C816"
         }
     },
-    "$SectionHeaders": {
+    "SectionHeaders": {
         "[ELFHeader.SectionHeaderNum]": "header/program.json"
     }
 }

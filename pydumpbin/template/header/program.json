@@ -1,33 +1,33 @@
 {
     "Name": "*u4",
     "Type": "*u4",
-    "$Flags": {
+    "Flags": {
         "-x32": "*u4",
         "-x64": "*u8"
     },
-    "$Address": {
+    "Address": {
         "-x32": "*u4",
         "-x64": "*u8"
     },
-    "$Offset": {
+    "Offset": {
         "-x32": "*u4",
         "-x64": "*u8"
     },
-    "$Size": {
+    "Size": {
         "-x32": "*u4",
         "-x64": "*u8"
     },
     "Link": "*u4",
-    "nfo": "*u4",
-    "$Align": {
+    "Info": "*u4",
+    "Align": {
         "-x32": "*u4",
         "-x64": "*u8"
     },
-    "$EntSize": {
+    "EntSize": {
         "-x32": "*u4",
         "-x64": "*u8"
     },
-    "$Raw": "raw",
+    "Raw": "raw",
 
     "?Type": {
         "0x0": "NULL",
@@ -54,10 +54,10 @@
     "?Flags": {
         "0x1": "WRITE",
         "0x2": "ALLOC",
-        "0x4": "EXECINSTR",
+        "0x4": "EXECUTE",
         "0x10": "MERGE",
         "0x20": "STRINGS",
-        "0x40": "INFO_LINK",
+        "0x40": "INFO",
         "0x80": "LINK_ORDER",
         "0x100": "OS_NONCONFORMING",
         "0x200": "GROUP",
