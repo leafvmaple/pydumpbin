@@ -10,10 +10,8 @@
     "NumberOfLinenumbers": "*u2",
     "Characteristics": "*u4",
 
-    "-Relocations[NumberOfRelocations]": {
-        "VirtualAddress": "*u4",
-        "SymbolTableIndex": "*u4",
-        "Type": "*u2"
+    "-Relocations": {
+        "[.NumberOfRelocations]" : "header/relocation.json"
     },
 
     "?Characteristics": {

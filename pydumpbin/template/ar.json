@@ -28,13 +28,13 @@
     "ObjectFiles": {
         "[.SecondLinker.NumberOfMembers]": {
             "ArchiveMemberHeader": "header/archive_member.json",
-            "-LongFormat": {
+            "-x64": {
                 "FileHeader": "header/file.json",
                 "SectionHeaders": {
                     "[.FileHeader.NumberOfSections]": "header/section.json"
                 }
             },
-            "-ShortFormat": {
+            "-x86": {
                 "ImportHeader": "header/import.json"
             }
         }

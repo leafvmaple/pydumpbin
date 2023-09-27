@@ -144,6 +144,6 @@
         }
     },
     "SectionHeaders": {
-        "[ELFHeader.SectionHeaderNum]": "header/program.json"
+        "[ELFHeader.SectionHeaderNum]": "header/elf_section.json"
     }
 }

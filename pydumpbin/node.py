@@ -82,7 +82,8 @@ class Node:
         if type(node) is not Node:
             node = Node(data=node, root=self._root)
         self._data[i] = node
-        setattr(self, i, self._data[i])
+        if not i.startswith('+'):
+            setattr(self, i, self._data[i])
 
     def __lt__(self, other):
         return self._data < other
@@ -112,13 +113,20 @@ class Node:
                         self._desc.append(desc[k])
                         value -= k
 
-    def decrypt(self, f, json_data, py_data, py_enable=True):
+    def decrypt(self, f, json_data, py_data):
         self._begin = f.tell() if f else 0
         self._addr = hex(self._begin)
         if self._py or not self.decrypt_py(f, json_data, py_data):
             self.decrypt_json(f, json_data, py_data)
         if not hasattr(self, '_raw'):
             self._raw = file_slice(f, self._begin)
+        return self
+
+    def decrypt_offset(self, f, json_data, py_data, offset):
+        tell = f.tell()
+        f.seek(offset)
+        self.decrypt(f, json_data, py_data)
+        f.seek(tell)
         return self
 
     def decrypt_json(self, f, json_data, py_data):
