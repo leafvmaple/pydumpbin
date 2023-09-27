@@ -7,8 +7,6 @@
     "SizeOfOptionalHeader": "*u2",
     "Characteristics": "*u2",
 
-    ">PointerToSymbolTable": "0x",
-
     "?Machine": {
         "0x0": "UNKNOWN",
         "0x184": "ALPHA",

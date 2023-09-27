@@ -31,7 +31,7 @@
             "-x64": {
                 "FileHeader": "header/file.json",
                 "SectionHeaders": {
-                    "[.FileHeader.NumberOfSections]": "header/section.json"
+                    "[.FileHeader.NumberOfSections]": "header/ar_section.json"
                 }
             },
             "-x86": {

@@ -36,3 +36,11 @@ def Raw(node: Node, file, json_data, py_data):
     size = int(node._parent.Size)
     if size > 0:
         node.decrypt_raw(file, offset, size)
+
+
+def __del__(node: Node, file, json_data, py_data):
+    offset = int(node.Offset)
+    size = int(node.Size)
+    if size > 0:
+        node['+Raw'] = Node()
+        node['+Raw'].decrypt_raw(file, offset, size)

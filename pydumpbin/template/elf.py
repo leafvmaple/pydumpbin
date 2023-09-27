@@ -26,7 +26,7 @@ def SectionHeaders(node: Node, file, json_data, py_data):
 
 def __del__(node: Node, file, json_data, py_data):
     idx = int(node.ELFHeader.SectionHeaderStringIndex)
-    raw = node.SectionHeaders[idx].Raw
+    raw = node.SectionHeaders[idx]['+Raw']
 
     for i, secion in enumerate(node.SectionHeaders):
         start = int(secion.Name)

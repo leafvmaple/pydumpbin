@@ -6,8 +6,8 @@ def __del__(node: Node, file, json_data, py_data):
     size = int(node.SizeOfRawData)
 
     if size > 0:
-        node['Raw'] = Node()
-        node['Raw'].decrypt_raw(file, obj.FileHeader._begin + int(node.PointerToRawData), size)
+        node['+Raw'] = Node()
+        node['+Raw'].decrypt_raw(file, obj.FileHeader._begin + int(node.PointerToRawData), size)
 
     size = int(node.NumberOfRelocations)
     if size > 0:
