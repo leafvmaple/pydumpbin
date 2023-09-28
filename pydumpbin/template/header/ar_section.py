@@ -12,4 +12,4 @@ def __del__(node: Node, file, json_data, py_data):
     size = int(node.NumberOfRelocations)
     if size > 0:
         node['+Relocations'] = Node(root=node._root, parent=node)
-        node['+Relocations'].decrypt_offset(file, json_data['-Relocations'], py_data, obj.FileHeader._begin + int(node.PointerToRelocations))
+        node['+Relocations'].decrypt_with_offset(file, json_data['-Relocations'], py_data, obj.FileHeader._begin + int(node.PointerToRelocations))

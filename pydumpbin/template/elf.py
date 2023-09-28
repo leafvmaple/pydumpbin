@@ -3,19 +3,21 @@ from pydumpbin.node import Node
 MAGIC = b'\x7fELF'
 
 
+def Class(node: Node, file, json_data, py_data):
+    node.decrypt(file, json_data, py_data)
+    node._root['_AMD64'] = node == 2
+
+
 def Entry(node: Node, file, json_data, py_data):
-    x64 = node._root.ELFHeader.Class == 2
-    node.decrypt_platform(file, json_data, py_data, x64=x64)
+    node.decrypt_with_platform(file, json_data, py_data, x64=node._root._AMD64)
 
 
 def ProgramHeaderOffset(node: Node, file, json_data, py_data):
-    x64 = node._root.ELFHeader.Class == 2
-    node.decrypt_platform(file, json_data, py_data, x64=x64)
+    node.decrypt_with_platform(file, json_data, py_data, x64=node._root._AMD64)
 
 
 def SectionHeaderOffset(node: Node, file, json_data, py_data):
-    x64 = node._root.ELFHeader.Class == 2
-    node.decrypt_platform(file, json_data, py_data, x64=x64)
+    node.decrypt_with_platform(file, json_data, py_data, x64=node._root._AMD64)
 
 
 def SectionHeaders(node: Node, file, json_data, py_data):
@@ -28,8 +30,8 @@ def __del__(node: Node, file, json_data, py_data):
     idx = int(node.ELFHeader.SectionHeaderStringIndex)
     raw = node.SectionHeaders[idx]['+Raw']
 
-    for i, secion in enumerate(node.SectionHeaders):
-        start = int(secion.Name)
-        end = raw._raw.find(b'\x00', int(secion.Name))
-        secion.Name._desc = raw._raw[start: end].decode()
+    for i, section in enumerate(node.SectionHeaders):
+        start = int(section.Name)
+        end = raw._raw.find(b'\x00', int(section.Name))
+        section.Name._desc = raw._raw[start: end].decode()
         # secion.Name._display = strs[i]

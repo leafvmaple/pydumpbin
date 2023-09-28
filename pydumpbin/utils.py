@@ -150,8 +150,6 @@ def hex(value):
     return "0x%04X" % value
 
 
-def decrypt_platform(node, file, json_data, py_data, x64=None):
-    if x64 is True:
-        node.decrypt(file, json_data["-x86"], py_data)
-    elif x64 is False:
-        node.decrypt(file, json_data["-x64"], py_data)
+def get_format(json_data, x64=True):
+    platform = "-x64" if x64 is True else "-x86"
+    return json_data[platform]

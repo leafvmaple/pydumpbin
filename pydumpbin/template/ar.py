@@ -24,7 +24,7 @@ def ObjectFile(node: Node, file, json_data, py_data):
     file.seek(file.tell() - 2)
     tell = file.tell()
 
-    node.decrypt_platform(file, json_data, py_data, x64=machine != 0)
+    node.decrypt_with_platform(file, json_data, py_data, x64=machine != 0)
 
     file.seek(tell + int(node['ArchiveMemberHeader']['Size']))
 

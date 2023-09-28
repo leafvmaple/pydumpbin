@@ -2,8 +2,9 @@ import os
 import json
 import runpy
 import datetime
+import capstone
 
-from .utils import read, file_slice, hex
+from .utils import read, file_slice, hex, get_format
 
 
 def read_py(f, path):
@@ -52,7 +53,7 @@ def get_obj(raw_key, tab):
     return tab[key]
 
 
-def get_value(raw, parent, root):
+def generate_list(raw, format, parent, root):
     key = raw[1:-1]
     if key.startswith('.'):
         key = key[1:]
@@ -62,28 +63,29 @@ def get_value(raw, parent, root):
     values = key.split('.')
     for value in values:
         tab = tab[value]
-    return int(tab)
+    return [format] * int(tab)
 
 
 class Node:
     def __init__(self, key='', root=None, parent=None, data=None):
         self._py = False
+        self._addr = ''
         self._desc = ''
         self._display = ''
         self._key = key
         self._parent = parent
-        self._data = data if data else {}
-        self._root = root if root else self
+        self._data = data if data is not None else {}
+        self._root = root if root is not None else self
 
     def __getitem__(self, i):
         return self._data[i]
 
     def __setitem__(self, i, node):
-        if type(node) is not Node:
-            node = Node(data=node, root=self._root)
-        self._data[i] = node
+        if type(node) is Node:
+            self._data[i] = node
+
         if not i.startswith('+'):
-            setattr(self, i, self._data[i])
+            setattr(self, i, node)
 
     def __lt__(self, other):
         return self._data < other
@@ -92,9 +94,14 @@ class Node:
         return self._data > other
 
     def __eq__(self, other):
+        if type(other) is str:
+            return self._desc == other
         return self._data == other
 
     def __int__(self):
+        return self._data
+
+    def __bool__(self):
         return self._data
 
     def desc(self, json_data):
@@ -116,17 +123,43 @@ class Node:
     def decrypt(self, f, json_data, py_data):
         self._begin = f.tell() if f else 0
         self._addr = hex(self._begin)
+        self._format = json_data
         if self._py or not self.decrypt_py(f, json_data, py_data):
             self.decrypt_json(f, json_data, py_data)
         if not hasattr(self, '_raw'):
             self._raw = file_slice(f, self._begin)
         return self
 
-    def decrypt_offset(self, f, json_data, py_data, offset):
+    def decrypt_with_platform(self, file, json_data, py_data, x64=None):
+        self.decrypt(file, get_format(json_data, x64), py_data)
+        return self
+
+    def decrypt_with_offset(self, f, json_data, py_data, offset):
         tell = f.tell()
         f.seek(offset)
         self.decrypt(f, json_data, py_data)
         f.seek(tell)
+        return self
+
+    def decrypt_raw(self, f, begin, size):
+        self._begin = begin
+        self._addr = hex(self._begin)
+
+        self._raw = file_slice(f, self._begin, begin + size)
+        return self
+
+    def decrypt_assembly(self, f, begin, size):
+        self._begin = begin
+        self._addr = hex(self._begin)
+
+        self._raw = file_slice(f, self._begin, begin + size)
+        md = capstone.Cs(capstone.CS_ARCH_X86, capstone.CS_MODE_64)
+        for v in md.disasm(self._raw, 0x0):
+            k = "0x%X" % v.address
+            self._data[k] = Node(data='%s\t%s' % (v.mnemonic, v.op_str))
+            self._data[k]._begin = begin + v.address
+            self._data[k]._raw = v.bytes
+
         return self
 
     def decrypt_json(self, f, json_data, py_data):
@@ -136,17 +169,13 @@ class Node:
             self.decrypt_str(f, json_data, py_data)
         if type(json_data) is dict:
             self.decrypt_dict(f, json_data, py_data)
+        if type(json_data) is list:
+            self.decrypt_list(f, json_data, py_data)
 
     def decrypt_py(self, f, json_data, py_data):
         if self._key in py_data and callable(py_data[self._key]):
             self._py = True
             return py_data[self._key](self, f, json_data, py_data) is not False
-
-    def decrypt_raw(self, f, begin, size):
-        self._begin = begin
-        self._addr = hex(self._begin)
-
-        self._raw = file_slice(f, self._begin, begin + size)
 
     def decrypt_file(self, f, json_name):
         path = os.path.join(os.path.dirname(__file__), 'template', json_name)
@@ -168,7 +197,10 @@ class Node:
         if json_data.endswith('.json'):
             self.decrypt_file(f, json_data)
         else:
-            self._data = read(f, json_data)
+            try:
+                self._data = read(f, json_data)
+            except Exception:
+                pass
 
     def decrypt_dict(self, f, json_data: dict, py_data):
         for k, v in json_data.items():
@@ -186,20 +218,15 @@ class Node:
                 value = get_obj(k, self._data)
                 value.desc(v)
             elif k.startswith('['):
-                num = get_value(k, **kargs)
-                k = self._key[:-1]  # remove 's'
-                self._data = [Node(k, **kargs) for i in range(num)]
-                for node in self._data:
-                    node.decrypt(f, v, py_data)
+                format = generate_list(k, v, **kargs)
+                self.decrypt_list(f, format, py_data)
             else:
-                self[k] = Node(k, **kargs)
-                self[k].decrypt(f, v, py_data)
+                self[k] = Node(k, **kargs).decrypt(f, v, py_data)
 
-    def decrypt_platform(self, file, json_data, py_data, x64=None):
-        if x64 is False:
-            self.decrypt(file, json_data["-x86"], py_data)
-        elif x64 is True:
-            self.decrypt(file, json_data["-x64"], py_data)
+    def decrypt_list(self, f, json_data, py_data):
+        k = self._key[:-1]  # remove 's'
+        self._data = [Node(k, root=self._root, parent=self).decrypt(f, format, py_data)
+                      for format in json_data]
 
     def get(self):
         if self._display != '':

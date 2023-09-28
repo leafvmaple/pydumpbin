@@ -30,7 +30,7 @@
         "SectionHeaderStringIndex": "*u2",
 
         "?Class": {
-            "0x1": "x32",
+            "0x1": "x86",
             "0x2": "x64"
         },
 

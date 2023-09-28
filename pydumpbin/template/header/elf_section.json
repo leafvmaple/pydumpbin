@@ -2,30 +2,67 @@
     "Name": "*u4",
     "Type": "*u4",
     "Flags": {
-        "-x32": "*u4",
+        "-x86": "*u4",
         "-x64": "*u8"
     },
     "Address": {
-        "-x32": "*u4",
+        "-x86": "*u4",
         "-x64": "*u8"
     },
     "Offset": {
-        "-x32": "*u4",
+        "-x86": "*u4",
         "-x64": "*u8"
     },
     "Size": {
-        "-x32": "*u4",
+        "-x86": "*u4",
         "-x64": "*u8"
     },
     "Link": "*u4",
     "Info": "*u4",
     "Align": {
-        "-x32": "*u4",
+        "-x86": "*u4",
         "-x64": "*u8"
     },
     "EntSize": {
-        "-x32": "*u4",
+        "-x86": "*u4",
         "-x64": "*u8"
+    },
+
+    "-Relocation": {
+        "-x86": {
+            "Offset": "*u4",
+            "Word": "*u4"
+        },
+        "-x64": {
+            "Offset": "*u8",
+            "Word": "*u8"
+        }
+    },
+
+    "-RelocationA": {
+        "-x86": {
+            "Offset": "*u4",
+            "Word": "*u4",
+            "Addend": "*u4"
+        },
+        "-x64": {
+            "Offset": "*u8",
+            "Word": "*u8",
+            "Addend": "*u8"
+        }
+    },
+
+    "-SymbolTable": {
+        "-x86": {
+            "Offset": "*u4",
+            "Address": "*u4",
+            "Addend": "*u4"
+        },
+        "-x64": {
+            "Offset": "*u8",
+            "Word": "*u1",
+            "Addend": "*u1"
+        }
     },
 
     "?Type": {
