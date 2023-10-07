@@ -30,13 +30,15 @@ def process_file(f, path, check=False):
     return 'success', json_data, py_data
 
 
-def check_magic(f, py_data):
+def check_magic(file, py_data):
     if "MAGIC" not in py_data:
         return True
-    magic_data = py_data["MAGIC"]
-    if type(magic_data) is bytes:
-        return magic_data == f.read(len(magic_data))
-    return magic_data(f)
+    py_magic = py_data["MAGIC"]
+    if callable(py_magic):
+        return py_magic(file)
+    file_magic = file.read(len(py_magic))
+    file.seek(0)
+    return py_magic == file_magic
 
 
 def check_ext(f, py_data):

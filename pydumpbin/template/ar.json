@@ -1,4 +1,5 @@
 {
+    "Signature": "*b8",
     "FirstLinker": {
         "ArchiveMemberHeader": "header/archive_member.json",
         "NumberOfSymbols": "+u4",

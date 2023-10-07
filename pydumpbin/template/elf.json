@@ -1,4 +1,5 @@
 {
+    "Signature": "*b4",
     "ELFHeader": {
         "Class": "*u1",
         "Data": "*u1",
