@@ -47,10 +47,16 @@ def read_string(file, opt, len):
     return res
 
 
+def read_bytes(file, opt, len):
+    res = bytes.__str__(file.read(len))
+    return res
+
+
 READ_BYTE = {
     'u': lambda f, o, x: int.from_bytes(fread(f, int(x)), BYTE_ORDER[o]),
     'i': lambda f, o, x: int.from_bytes(fread(f, int(x)), BYTE_ORDER[o], signed=True),
     's': lambda f, o, x: read_string(f, o, int(x)),
+    'b': lambda f, o, x: read_bytes(f, o, int(x)),
 }
 
 
@@ -125,13 +131,6 @@ def format(obj, keys, desc):
         res[k] = format_obj(k, value, desc)
 
     return res
-
-
-def read_bytes(file, offset, len):
-    cur_offset = file.tell()
-    data = file.read(len)
-    file.seek(cur_offset)
-    return data
 
 
 def file_slice(file, begin, end=None):

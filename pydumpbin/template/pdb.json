@@ -1,0 +1,8 @@
+{
+    "Signature": "*b32",
+    "PageSize": "*u4",
+    "AllocTabPointer": "*u4",
+    "FilePageNum": "*u4",
+    "RootStreamSize": "*u4",
+    "_Reserved": "*u4"
+}
