@@ -152,3 +152,27 @@ def hex(value):
 def get_format(json_data, x64=True):
     platform = "-x64" if x64 is True else "-x86"
     return json_data[platform]
+
+
+def pages(size, page_size):
+    res = size // page_size
+    if size % page_size == 0:
+        return res
+    return res + 1
+
+
+class File:
+    def __init__(self, data, start):
+        self._data = data
+        self._pos = 0
+        self._start = start
+
+    def read(self, len):
+        self._pos += len
+        return self._data[self._pos - len: self._pos]
+
+    def seek(self, offset):
+        self._pos = offset - self._start
+
+    def tell(self):
+        return self._pos + self._start

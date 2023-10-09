@@ -69,13 +69,14 @@ def generate_list(raw, format, parent, root):
 
 
 class Node:
-    def __init__(self, key='', root=None, parent=None, data=None):
+    def __init__(self, key='', root=None, parent=None, data=None, index=None):
         self._py = False
         self._addr = ''
         self._desc = ''
         self._display = ''
         self._key = key
         self._parent = parent
+        self._index = index
         self._data = data if data is not None else {}
         self._root = root if root is not None else self
 
@@ -106,7 +107,7 @@ class Node:
     def __bool__(self):
         return self._data
 
-    def desc(self, json_data):
+    def _set_desc(self, json_data):
         if json_data == 'timestamp':
             self._desc = datetime.datetime.fromtimestamp(self._data) if self._data > 0 else 'FFFFFFFF'
         elif type(json_data) is dict:
@@ -218,7 +219,7 @@ class Node:
                 continue
             elif k.startswith('?'):
                 value = get_obj(k, self._data)
-                value.desc(v)
+                value._set_desc(v)
             elif k.startswith('['):
                 format = generate_list(k, v, **kargs)
                 self.decrypt_list(f, format, py_data)
@@ -227,15 +228,19 @@ class Node:
 
     def decrypt_list(self, f, json_data, py_data):
         k = self._key[:-1]  # remove 's'
-        self._data = [Node(k, root=self._root, parent=self).decrypt(f, format, py_data)
-                      for format in json_data]
+        self._data = [Node(k, root=self._root, parent=self, index=i).decrypt(f, format, py_data)
+                      for i, format in enumerate(json_data)]
+        return self
 
     def get(self):
-        if self._display != '':
-            return self._display
         if type(self._data) is int:
             return hex(self._data)
         return self._data
+
+    def desc(self):
+        if type(self._data) is int:
+            return self._data
+        return self._display
 
     def to_data(self):
         data = self.get()

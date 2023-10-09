@@ -4,5 +4,16 @@
     "AllocTabPointer": "*u4",
     "FilePageNum": "*u4",
     "RootStreamSize": "*u4",
-    "_Reserved": "*u4"
+    "_Reserved": "*u4",
+    "RootPagesPageNum": "",
+    "RootPages": "",
+    "RootStream": {
+        "StreamNumber": "*u4",
+        "StreamSizes": {
+            "[.StreamNumber]": "*u4"
+        },
+        "StreamPages": {
+            "[.StreamNumber]": "*u4"
+        }
+    }
 }
