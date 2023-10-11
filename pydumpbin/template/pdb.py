@@ -43,6 +43,12 @@ def RootStream(node: Node, file, json_data, py_data):
     node.decrypt(File(data, int(node._parent.RootPages._data[0]) * page_size), json_data, py_data)
 
 
+def StreamSize(node: Node, file, json_data, py_data):
+    node.decrypt(file, json_data, py_data)
+    if node._data == 0xFFFFFFFF:
+        node._data = 0
+
+
 def StreamPage(node: Node, file, json_data, py_data):
     page_size = int(node._root.PageSize)
     index = node._index
