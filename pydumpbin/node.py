@@ -73,7 +73,6 @@ class Node:
         self._py = False
         self._addr = ''
         self._desc = ''
-        self._display = ''
         self._key = key
         self._parent = parent
         self._index = index
@@ -238,9 +237,11 @@ class Node:
         return self._data
 
     def desc(self):
+        if self._desc != '':
+            return self._desc
         if type(self._data) is int:
             return self._data
-        return self._display
+        return ''
 
     def to_data(self):
         data = self.get()

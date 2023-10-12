@@ -15,5 +15,19 @@
         "StreamPages": {
             "[.StreamNumber]": "*u4"
         }
+    },
+
+    "Streams": {
+        "[RootStream.StreamNumber]" : {
+            "-Stream1" : {
+                "Version": "*u4",
+                "TimeDateStamp": "*u4",
+                "Age": "*u4",
+                "GUID": "*u16",
+                "NameCount": "u4",
+
+                "?TimeDateStamp": "timestamp"
+            }
+        }
     }
 }

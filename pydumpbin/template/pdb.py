@@ -50,9 +50,30 @@ def StreamSize(node: Node, file, json_data, py_data):
 
 
 def StreamPage(node: Node, file, json_data, py_data):
-    page_size = int(node._root.PageSize)
     index = node._index
+    page_size = int(node._root.PageSize)
     size = int(node._parent._parent.StreamSizes[index])
 
     stream_pages = pages(size, page_size)
     node.decrypt(file, ["*u4"] * stream_pages, py_data)
+
+
+def Stream(node: Node, file, json_data, py_data):
+    index = node._index
+    page_size = int(node._root.PageSize)
+
+    page_list = node._root.RootStream.StreamPages[index]
+
+    if len(page_list._data) > 0:
+        datas = []
+        for page in page_list._data:
+            file.seek(int(page) * page_size)
+            datas.append(file.read(page_size))
+        data = b''.join(datas)
+
+        start = int(page_list._data[0]) * page_size
+        if index == 1:
+            node.decrypt(File(data, start), json_data['-Stream1'], py_data)
+        else:
+            node.decrypt_raw(File(data, start), start, len(data))
+        # node.decrypt(File(data, int(node._root.RootStream.StreamPages._data[0]) * page_size), json_data, py_data)

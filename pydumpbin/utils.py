@@ -138,6 +138,8 @@ def file_slice(file, begin, end=None):
         return b''
     if end is None:
         end = file.tell()
+    if end < begin:
+        return b''
     tell = file.tell()
     file.seek(begin)
     data = file.read(end - begin)
