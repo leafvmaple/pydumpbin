@@ -1,4 +1,5 @@
 import os
+import sys
 import json
 import runpy
 import datetime
@@ -109,6 +110,12 @@ class Node:
     def _set_desc(self, json_data):
         if json_data == 'timestamp':
             self._desc = datetime.datetime.fromtimestamp(self._data) if self._data > 0 else 'FFFFFFFF'
+        elif json_data == 'guid':
+            self._desc = "%08X-%04X-%04X-%02X%02X-%02X%02X%02X%02X" % (
+                int.from_bytes(self._raw[0: 4], sys.byteorder),
+                int.from_bytes(self._raw[4: 6], sys.byteorder),
+                int.from_bytes(self._raw[6: 8], sys.byteorder),
+                self._raw[8], self._raw[9], self._raw[10], self._raw[11], self._raw[12], self._raw[13])
         elif type(json_data) is dict:
             desc = {eval(k) if type(k) is str else k: v for k, v in json_data.items()}
             keys = sorted(desc, reverse=True)

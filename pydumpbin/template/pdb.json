@@ -26,7 +26,8 @@
                 "GUID": "*u16",
                 "NameCount": "u4",
 
-                "?TimeDateStamp": "timestamp"
+                "?TimeDateStamp": "timestamp",
+                "?GUID": "guid"
             }
         }
     }
