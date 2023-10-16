@@ -77,3 +77,13 @@ def Stream(node: Node, file, json_data, py_data):
         else:
             node.decrypt_raw(File(data, start), start, len(data))
         # node.decrypt(File(data, int(node._root.RootStream.StreamPages._data[0]) * page_size), json_data, py_data)
+
+
+def NamesSize(node: Node, file, json_data, py_data):
+    node.decrypt(file, json_data, py_data)
+
+    tell = file.tell()
+    raw = file.read(int(node))
+    file.seek(tell)
+    cnt = raw.count(b'\0')
+    node._parent["Names"] = Node(key='Names').decrypt(file, ["*s0"] * cnt, py_data)

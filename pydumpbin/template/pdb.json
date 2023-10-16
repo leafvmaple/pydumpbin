@@ -24,7 +24,10 @@
                 "TimeDateStamp": "*u4",
                 "Age": "*u4",
                 "GUID": "*u16",
-                "NameCount": "u4",
+                "NamesSize": "*u4",
+                "-Names": {
+                    "[*]": "*s0"
+                },
 
                 "?TimeDateStamp": "timestamp",
                 "?GUID": "guid"
